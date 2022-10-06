@@ -1,0 +1,46 @@
+name: Multi-cloud-simple
+version: 1
+formatVersion: 1
+inputs:
+  environment:
+    type: string
+    description: Target Environment
+    title: Target Environment
+    oneOf:
+      - title: vSphere Lab
+        const: env:vsphere
+      - title: Google Cloud
+        const: env:gcp
+    default: env:vsphere
+  flavor:
+    description: Virtual machine profile
+    type: string
+    title: Node Size
+    oneOf:
+      - title: Small
+        const: Small
+      - title: Medium
+        const: Medium
+    default: Small
+resources:
+  Cloud_Machine_1:
+    type: Cloud.Machine
+    metadata:
+      layoutPosition:
+        - 0
+        - 0
+    properties:
+      image: Ubuntu18
+      flavor: ${input.flavor}
+      constraints:
+        - tag: ${input.environment}
+      networks:
+        - network: ${resource.Cloud_Network_1.id}
+  Cloud_Network_1:
+    type: Cloud.Network
+    metadata:
+      layoutPosition:
+        - 1
+        - 0
+    properties:
+      networkType: existing
