@@ -1,3 +1,5 @@
+Name: Ubuntu16
+version: 1
 formatVersion: 1
 inputs:
   username:
