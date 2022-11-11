@@ -1,0 +1,52 @@
+formatVersion: 1
+inputs:
+  username:
+    type: string
+    description: The username you would like <br> to use for the installation.
+    default: demouser
+    title: System Admin Account Username
+  password:
+    type: string
+    description: The password you would like <br> to use for the ocuser account.
+    title: OpenCart Admin Account Password
+    pattern: '[a-z0-9A-Z@#$]+'
+    encrypted: true
+resources:
+  Cloud_vSphere_Machine_1:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 0
+        - 1
+    properties:
+      image: Ubuntu
+      flavor: Small
+      tags:
+        - key: Business Units
+          value: Development
+      cloudConfig:
+        users:
+          - default
+          - name: tom2
+            ssh_authorized_keys: ${secret.RSA_Key}
+        packages:
+          - php
+          - unzip
+          - open-vm-tools
+        write_files:
+          - path: /etc/hosts
+            content: 127.0.0.1 ${self.resourceName}
+            append: true
+        runcmd:
+          - service ssh reload
+          - hostnamectl set-hostname ${self.resourceName}
+      networks:
+        - network: ${resource.Cloud_vSphere_Network_1.id}
+  Cloud_vSphere_Network_1:
+    type: Cloud.vSphere.Network
+    metadata:
+      layoutPosition:
+        - 1
+        - 0
+    properties:
+      networkType: existing
